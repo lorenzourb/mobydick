@@ -1,7 +1,7 @@
 # mobydick
 
-GOOS=linux CGO_ENABLED=0 go build -ldflags '-s -w' -a -installsuffix cgo -o -o main.go 
-    zip function.zip main  
+GOOS=linux CGO_ENABLED=0 go build main.go 
+    zip lambda.zip main  
 
 chmod 644 $(find ./mobydick -type f)
 chmod 755 $(find ./mobydick -type d)
