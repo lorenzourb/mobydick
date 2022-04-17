@@ -119,7 +119,7 @@
           ],
           "metricColumn": "token",
           "rawQuery": false,
-          "rawSql": "SELECT\n  $__timeGroupAlias(\"timestamp\",$__interval),\n  token AS metric,\n  max(amount) AS \"amount\"\nFROM transfers\nWHERE\n  $__timeFilter(\"timestamp\")\nGROUP BY 1,2\nORDER BY 1,2",
+          "rawSql": "SELECT\n  $__timeGroupAlias(\"timestamp\",$__interval),\n  token AS metric,\n  max(amount) AS \"amount\"\nFROM \nWHERE\n  $__timeFilter(\"timestamp\")\nGROUP BY 1,2\nORDER BY 1,2",
           "refId": "A",
           "select": [
             [
@@ -143,7 +143,7 @@
               }
             ]
           ],
-          "table": "transfers",
+          "table": "transfer",
           "timeColumn": "\"timestamp\"",
           "timeColumnType": "timestamp",
           "where": [

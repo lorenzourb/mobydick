@@ -22,7 +22,7 @@ func Connect() *sql.DB {
 }
 
 func InsertLastBlockNumber(lastBlockNumber int64, db *sql.DB) {
-	sqlStatement :=`INSERT INTO "blockNumbers" ("blockNumber") VALUES  ($1)`
+	sqlStatement :=`INSERT INTO "block_number" ("block_number") VALUES  ($1)`
 	_, err := db.Exec(sqlStatement, lastBlockNumber)
 	if err != nil {
 		fmt.Println("An error occured while executing query: ", err)
@@ -30,7 +30,7 @@ func InsertLastBlockNumber(lastBlockNumber int64, db *sql.DB) {
 }
 
 func InsertTransfer(r rpc.GetLogsRespModel, tm time.Time, db *sql.DB, token utils.Token, tokenPrice float64){
-	sqlStatement :=`INSERT INTO transfers ("timestamp", token, amount, "from", "to", "blockNumber", "txHash") VALUES  ($1,$2,$3,$4,$5,$6,$7)`
+	sqlStatement :=`INSERT INTO transfer ("timestamp", token, amount, "from", "to", "block_number", "tx_hash") VALUES  ($1,$2,$3,$4,$5,$6,$7)`
 	data := utils.HexToBigInt(r.Data)
 	var dataFormatted *big.Int
 	if(token.Decimals == 6) {
@@ -49,7 +49,7 @@ func InsertTransfer(r rpc.GetLogsRespModel, tm time.Time, db *sql.DB, token util
 }
 
 func GetLastBlockNumber(db *sql.DB)int64{
-	rows, err := db.Query(`SELECT "blockNumber"	FROM "blockNumbers" ORDER BY "blockNumber" DESC LIMIT 1`)
+	rows, err := db.Query(`SELECT "block_number"	FROM "block_number" ORDER BY "block_number" DESC LIMIT 1`)
 	if err != nil {
 							panic(err)
 	}
