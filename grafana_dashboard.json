@@ -29,10 +29,6 @@
   "liveNow": false,
   "panels": [
     {
-      "datasource": {
-        "type": "postgres",
-        "uid": "zUz90vUnz"
-      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -105,22 +101,15 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "zUz90vUnz"
+            "uid": "yoHfooU7k"
           },
           "format": "time_series",
-          "group": [
-            {
-              "params": [
-                "$__interval",
-                "none"
-              ],
-              "type": "time"
-            }
-          ],
-          "metricColumn": "token",
-          "rawQuery": false,
-          "rawSql": "SELECT\n  $__timeGroupAlias(\"timestamp\",$__interval),\n  token AS metric,\n  max(amount) AS \"amount\"\nFROM \nWHERE\n  $__timeFilter(\"timestamp\")\nGROUP BY 1,2\nORDER BY 1,2",
-          "refId": "A",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  $__timeGroupAlias(\"timestamp\",$__interval),\n  token AS metric,\n  max(amount) AS \"amount\"\nFROM transfer\nWHERE\n  $__timeFilter(\"timestamp\")\nGROUP BY 1,2\nORDER BY 1,2",
+          "refId": "B",
           "select": [
             [
               {
@@ -160,7 +149,7 @@
     }
   ],
   "refresh": "",
-  "schemaVersion": 36,
+  "schemaVersion": 35,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -172,8 +161,8 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "mobydick",
+  "title": "MobyDick",
   "uid": "814Gnd8nk",
-  "version": 10,
+  "version": 5,
   "weekStart": ""
 }

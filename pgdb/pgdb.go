@@ -7,7 +7,6 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/INFURA/mobydick/rpc"
 	"time"
-	"math/big"
 )
 
 func Connect() *sql.DB {
@@ -29,22 +28,15 @@ func InsertLastBlockNumber(lastBlockNumber int64, db *sql.DB) {
 	}
 }
 
-func InsertTransfer(r rpc.GetLogsRespModel, tm time.Time, db *sql.DB, token utils.Token, tokenPrice float64){
+func InsertTransfer(r rpc.GetLogsRespModel, tm time.Time, db *sql.DB, token utils.Token, amount int64){
 	sqlStatement :=`INSERT INTO transfer ("timestamp", token, amount, "from", "to", "block_number", "tx_hash") VALUES  ($1,$2,$3,$4,$5,$6,$7)`
-	data := utils.HexToBigInt(r.Data)
-	var dataFormatted *big.Int
-	if(token.Decimals == 6) {
-		dataFormatted = new(big.Int).Quo(data, big.NewInt(utils.SixDigitsThreshold))
-	} else {
-		dataFormatted = new(big.Int).Quo(data, big.NewInt(utils.EighteenDigitsThreshold))
-	}
-	
+
 	// This calculation is actually not precise, as get the token price at a slightly different time of when the actual tx happened
-	_, err := db.Exec(sqlStatement, tm.Format("2006-01-02 15:04:05") , token.Name, int(float64(dataFormatted.Int64()) * tokenPrice), r.Topics[1], r.Topics[2], r.BlockNumber, r.TransactionHash)
+	_, err := db.Exec(sqlStatement, tm.Format("2006-01-02 15:04:05") , token.Name, amount, r.Topics[1], r.Topics[2], r.BlockNumber, r.TransactionHash)
 	if err != nil {
 		fmt.Println("An error occured while executing query: ", err)
 	} else {
-		fmt.Printf("Inserted transfer %s %s %d %s %s %s %s", tm.Format("2006-01-02 15:04:05") , r.Address,  int(float64(dataFormatted.Int64()) * tokenPrice), r.Topics[1], r.Topics[2], r.BlockNumber, r.TransactionHash)
+		fmt.Printf("Inserted transfer %s %s %d %s %s %s %s", tm.Format("2006-01-02 15:04:05") , r.Address, amount, r.Topics[1], r.Topics[2], r.BlockNumber, r.TransactionHash)
 	}
 }
 

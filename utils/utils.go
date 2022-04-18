@@ -19,7 +19,7 @@ var (
 )
 
 const (
-	TxAmountThreshold = 100000000000
+	TxAmountThreshold = 1000000
 	SixDigitsThreshold = 1000000
 	EighteenDigitsThreshold = 1000000000000000000
 )

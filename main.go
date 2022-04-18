@@ -41,11 +41,19 @@ func HandleRequest(ctx context.Context) {
 func insertTxs(logs rpc.GetLogsResponse, db *sql.DB, token utils.Token, tokenPrice float64) {	
 	for _,r := range logs.GetLogsResp {
 		data := utils.HexToBigInt(r.Data)
-		if(data.Cmp(big.NewInt(utils.TxAmountThreshold)) > 0){
+		var dataFormatted *big.Int
+		if(token.Decimals == 6) {
+			dataFormatted = new(big.Int).Quo(data, big.NewInt(utils.SixDigitsThreshold))
+		} else {
+			dataFormatted = new(big.Int).Quo(data, big.NewInt(utils.EighteenDigitsThreshold))
+		}
+
+		amount := int64(float64(dataFormatted.Int64()) * tokenPrice)
+		if(amount > utils.TxAmountThreshold){
 			getBlockByNumberResponse := rpc.GetBlockByNumber(r.BlockNumber)
 			i :=  utils.HexToInt(getBlockByNumberResponse.GetBlockByNumberResp.Timestamp)
 			tm := time.Unix(i, 0)
-			pgdb.InsertTransfer(r, tm, db, token, tokenPrice)		
+			pgdb.InsertTransfer(r, tm, db, token, amount)		
 		}
 	}
 }
