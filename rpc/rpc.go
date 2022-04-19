@@ -1,12 +1,14 @@
 package rpc
 
 import (
+	"strings"
 	"github.com/INFURA/mobydick/utils"
 	"net/http"
 	"fmt"
 	"bytes"
 	"encoding/json"
 	"io/ioutil"
+	"github.com/Jeffail/gabs"
 )
 
 type GetLogsResponse struct {
@@ -70,6 +72,7 @@ func GetBlockByNumber(blockNumber string) GetBlockByNumberResponse{
 		resp1, err := http.Post(utils.MainnetEndpoint, "application/json", requestBody1)
 		if err != nil {
 			fmt.Println(err)
+			panic(err)
 		}
 		defer resp1.Body.Close()
 		body1, _ := ioutil.ReadAll(resp1.Body) 
@@ -99,6 +102,7 @@ func GetLogs(from string, to string, address string) GetLogsResponse{
 	resp, err := http.Post(utils.MainnetEndpoint, "application/json", requestBody)
 	if err != nil {
 		fmt.Println(err)
+		panic(err)
 	}
 
 	defer resp.Body.Close()
@@ -119,6 +123,7 @@ func GetBlockNumber() string{
 	resp, err := http.Post(utils.MainnetEndpoint, "application/json", requestBody)
 	if err != nil {
 		fmt.Println(err)
+		panic(err)
 	}
 
 	defer resp.Body.Close()
@@ -130,4 +135,25 @@ func GetBlockNumber() string{
 	}
 
 	return getBlockNumberResponse.Result
+}
+
+func IsContractAddress(address string) bool {
+	params := []interface{}{address, "latest"}
+	jsonReq := map[string]interface{}{"jsonrpc": "2.0", "method": "eth_getCode","params":params, "id": 0}
+	postBody, _ := json.Marshal(jsonReq)
+	requestBody := bytes.NewBuffer(postBody)
+	resp, err := http.Post(utils.MainnetEndpoint, "application/json", requestBody)
+	if err != nil {
+		fmt.Println(err)
+		panic(err)
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body) 
+
+	jsonParsed, err := gabs.ParseJSON(body)
+	if err != nil {
+		panic(err)
+	}
+	return strings.Trim(jsonParsed.Path("result").String(), "\"") != "0x"
 }

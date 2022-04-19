@@ -72,12 +72,17 @@ func HexToBigInt(s string) *big.Int{
 	return i
 }
 
+func Unpad(paddedAddress string) string{
+	return "0x" + paddedAddress[26:]
+}
+
 func HexToInt(s string) int64{
 	numberStr := strings.Replace(s, "0x", "", -1)
 	numberStr = strings.Replace(numberStr, "0X", "", -1)
 	output, err := strconv.ParseInt(numberStr, 16, 64)
 	if err != nil {
 		fmt.Println(err)
+		panic(err)
 	}
 	return output
 }
@@ -96,6 +101,7 @@ func FetchAllTokenPrices() *gabs.Container{
 	resp, err := http.Get(CoinMarketCapURL + strings.Join(tokenIds[:], ","))
 	if err != nil {
 		fmt.Println(err)
+		panic(err)
 	}
 
 	defer resp.Body.Close()

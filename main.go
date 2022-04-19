@@ -53,7 +53,8 @@ func insertTxs(logs rpc.GetLogsResponse, db *sql.DB, token utils.Token, tokenPri
 			getBlockByNumberResponse := rpc.GetBlockByNumber(r.BlockNumber)
 			i :=  utils.HexToInt(getBlockByNumberResponse.GetBlockByNumberResp.Timestamp)
 			tm := time.Unix(i, 0)
-			pgdb.InsertTransfer(r, tm, db, token, amount)		
+			pgdb.InsertTransfer(r, tm, db, token, amount)	
+			pgdb.StoreWhale(utils.Unpad(r.Topics[1]), db)
 		}
 	}
 }
